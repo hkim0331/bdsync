@@ -24,23 +24,14 @@ def trailing_slash(s)
   end
 end
 
-def sync(ldir, remote, rdir, port)
-  ssh = "-e 'ssh -p #{port}'"
-  put = "#{RSYNC} #{ssh} #{trailing_slash(ldir)} #{remote}:#{rdir}"
-  get = "#{RSYNC} #{ssh} #{remote}:#{trailing_slash(rdir)} #{ldir}"
-  puts put
+def sync(ldir, remote, rdir, opts)
+  opt = opts.join(' ')
+  put = "#{RSYNC} #{opt} #{trailing_slash(ldir)} #{remote}:#{rdir}"
+  get = "#{RSYNC} #{opt} #{remote}:#{trailing_slash(rdir)} #{ldir}"
+#  puts put
   system(put)
-  puts get
+#  puts get
   system(get)
-end
-
-#FIXME: differ HOME between OSX and Linux
-def rpath(path, base = ENV['HOME'])
-  if path =~ /^#{base}\//
-    path.sub(/^#{base}\//,'')
-  else
-    path
-  end
 end
 
 def guess_path()
@@ -49,24 +40,38 @@ def guess_path()
   path
 end
 
-# just a test
 def guess_remote()
-  "sandbox.local"
+  case `hostname`
+  when /imac2.local/
+    'tmac2.melt.kyutech.ac.jp'
+  when /tmac2.local/
+    'imac2.melt.kyutech.ac.jp'
+  else
+    "sandbox.local"
+  end
 end
 
 #
 # main starts here
 #
-port = 22
+
 args = []
+opts = []
 
 while (arg=ARGV.shift)
   case arg
   when /\A-p/
     port = ARGV.shift
-    port = port.to_i
+    opts.push("-e 'ssh -p #{port}'")
   when /\A--port=(\d+)/
-    port = $1.to_i
+    port = $1
+    opts.push("-e 'ssh -p #{port}'")
+  when /\A--/
+    opts.push(arg)
+  when /\A-/
+    opts.push(arg)
+    arg = ARGV.shift
+    opts.push(arg)
   else
     args.push(arg)
   end
@@ -74,18 +79,19 @@ end
 
 case args.length
 when 0
-  sync(".", guess_remote(), guess_path(), port)
+  sync(".", guess_remote(), guess_path(), opts)
+
 when 1
-  # arg: [remote:there]
   remote, there = args[0].split(/:/)
   if there.nil?
-    there = rpath(pwd)
+    there = guess_path()
   end
-  sync(".", remote, there, port)
+  sync(".", remote, there, opts)
+
 when 2
-# arg: [here remote:there]
   remote,there = args[1].split(/:/)
-  sync(args[0], remote, there, port)
+  sync(args[0], remote, there, opts)
+
 else
   usage()
 end
