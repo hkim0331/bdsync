@@ -5,8 +5,9 @@
 ## USAGE
 
 * sync here remote:there
-  ローカルの here フォルダをリモートのthereフォルダと動機させる。
-  there を省略した場合、フォルダを推定する。
+
+    ローカルの here フォルダをリモートのthereフォルダと動機させる。
+    there を省略した場合、フォルダを推定する。
 
 * sync remote:there
   ローカルの現在フォルダをリモートのthereフォルダと動機させる。
