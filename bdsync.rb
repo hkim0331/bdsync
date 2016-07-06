@@ -8,9 +8,9 @@ RSYNC = "rsync -auv #{EXCLUDES}"
 def usage
   print <<EOU
 usage:
-	sync here remote:there
-	sync remote:there
-	sync
+    sync here remote:there
+    sync remote:there
+    sync
 EOU
   exit(1)
 end
@@ -47,7 +47,7 @@ def guess_remote()
   when /tmac2.local/
     'imac2.melt.kyutech.ac.jp'
   else
-    "sandbox.local"
+    'sandbox.local'
   end
 end
 
@@ -60,6 +60,8 @@ opts = []
 
 while (arg=ARGV.shift)
   case arg
+  when /\A(-h)|(--help)/
+    usage()
   when /\A-p/
     port = ARGV.shift
     opts.push("-e 'ssh -p #{port}'")

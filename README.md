@@ -19,6 +19,10 @@
 
 ## FIXME
 
+## HISTORY
+
+* /bin/sync と名前が被る。bdsync にコマンド名変更。2016-07-06
+
 ---
 hiroshi.kimura.0331@gmail.com
 
