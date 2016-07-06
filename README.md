@@ -1,4 +1,6 @@
-# SYNC
+# BDSYNC
+
+bidirectional sync
 
 ローカルのフォルダとリモートのフォルダを同期させる。
 
